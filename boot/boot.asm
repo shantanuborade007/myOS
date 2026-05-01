@@ -46,6 +46,21 @@ start:
     call query_e820
 
     ; -------------------------------------------------------------------------
+    ; VBE / VESA High Resolution Graphics
+    ; -------------------------------------------------------------------------
+    ; 1. Ask BIOS for VBE Mode Info for 0x144 (1024x768x32)
+    ; Store the result structure at physical address 0x600
+    mov ax, 0x4F01
+    mov cx, 0x144
+    mov di, 0x600
+    int 0x10
+
+    ; 2. Set the VBE Mode (0x4000 bit enables Linear Framebuffer)
+    mov ax, 0x4F02
+    mov bx, 0x4144
+    int 0x10
+
+    ; -------------------------------------------------------------------------
     ; Load kernel from disk into 0x10000
     ; -------------------------------------------------------------------------
     mov si, msg_loading

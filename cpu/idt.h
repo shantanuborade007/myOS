@@ -118,6 +118,7 @@ extern "C" void isr30(); extern "C" void isr31();
 // IRQ stub declarations — defined in idt_flush.asm
 // =============================================================================
 extern "C" void irq1_stub();    // Keyboard IRQ1 → vector 33
+extern "C" void irq12_stub();   // Mouse IRQ12 → vector 44
 
 // Install a hardware IRQ handler into the IDT
 // irq_num: 0-15 (maps to vector 32-47)

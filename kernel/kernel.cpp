@@ -8,6 +8,14 @@
 #include "../cpu/gdt.h"
 #include "../cpu/idt.h"
 #include "../memory/pmm.h"
+#include "../memory/paging.h"
+#include "../memory/kheap.h"
+#include "../drivers/mouse.h"
+#include "../drivers/vesa.h"
+#include "../drivers/ata.h"
+#include "../drivers/rtc.h"
+#include "../ui/gui.h"
+#include "shell.h"
 
 // =============================================================================
 // Run PMM allocation tests — proves allocator works correctly
@@ -154,12 +162,16 @@ extern "C" void kernel_main() {
     vga_set_color(ok_color);
     vga_print("\n[OK] Stage 9 complete. PMM ready.\n");
     vga_set_colors(VGA_COLOR_LIGHT_GRAY, VGA_COLOR_BLACK);
-    vga_print("     Next stage: mini shell with help/clear/echo/mem commands.\n\n");
-    vga_set_colors(VGA_COLOR_LIGHT_RED, VGA_COLOR_BLACK);
-    vga_print(">> Kernel halted. Press any key... <<\n");
+    // ── Phase A: Paging & Kernel Heap ─────────────────────────────────────
+    paging_init();
 
-    // Wait for a keypress before halting
-    keyboard_getchar();
+    // ── Phase B: Hardware Drivers ─────────────────────────────────────────
+    idt_install_irq(12, reinterpret_cast<uint32_t>(irq12_stub));
+    mouse_init();
+    ata_init();
+    rtc_init();
+    vesa_init();
 
-    while (true) { asm volatile("hlt"); }
+    // ── Phase C: Start Window Manager ─────────────────────────────────────
+    gui_start();
 }

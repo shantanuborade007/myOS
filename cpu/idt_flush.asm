@@ -196,3 +196,21 @@ irq1_stub:
     sti                         ; Re-enable interrupts
     iret                        ; Return from interrupt (restores EIP, CS, EFLAGS)
 
+; =============================================================================
+; irq12_stub — PS/2 Mouse (IRQ12 → vector 44)
+; =============================================================================
+[extern mouse_handler]
+[global irq12_stub]
+irq12_stub:
+    cli
+    pusha
+    mov ax, 0x10
+    mov ds, ax
+    mov es, ax
+    mov fs, ax
+    mov gs, ax
+    call mouse_handler
+    popa
+    sti
+    iret
+

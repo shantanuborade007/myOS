@@ -17,12 +17,21 @@ BUILD    = build
 IMG      = $(BUILD)/os.img
 
 CPP_SRCS = kernel/kernel.cpp    \
+           kernel/shell.cpp     \
            drivers/vga.cpp      \
            drivers/keyboard.cpp \
+           drivers/mouse.cpp    \
+           drivers/vesa.cpp     \
+           drivers/ata.cpp      \
+           drivers/rtc.cpp      \
            cpu/gdt.cpp          \
            cpu/idt.cpp          \
            cpu/isr.cpp          \
-           memory/pmm.cpp
+           memory/pmm.cpp       \
+           memory/kheap.cpp     \
+           memory/paging.cpp    \
+           ui/gui.cpp           \
+           lib/string.cpp
 
 ASM_SRCS = kernel/kernel_entry.asm \
            cpu/gdt_flush.asm       \
@@ -36,7 +45,7 @@ all: $(IMG)
 	@echo "Build complete -> $(IMG)"
 
 $(BUILD):
-	mkdir -p $(BUILD)/kernel $(BUILD)/drivers $(BUILD)/cpu $(BUILD)/memory
+	mkdir -p $(BUILD)/kernel $(BUILD)/drivers $(BUILD)/cpu $(BUILD)/memory $(BUILD)/lib $(BUILD)/ui
 
 $(BUILD)/boot.bin: boot/boot.asm | $(BUILD)
 	$(ASM) -f bin boot/boot.asm -o $@
